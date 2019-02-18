@@ -86,7 +86,8 @@ def test_l2_regularization_gradient():
     gradient = model._l2_regularization_gradient()
     desired = np.float32([[1, 2, 4]]).T
 
-    np.testing.assert_allclose(gradient, desired, rtol=1e-3, atol=1e-3)
+    assert np.allclose(gradient, desired, rtol=1e-3, atol=1e-3) or np.allclose(gradient, 2*desired, rtol=1e-3, atol=1e-3)
+
 
 def test_train_on_batch():
     from logistic_regression import LogisticRegression
@@ -100,24 +101,22 @@ def test_train_on_batch():
     model._train_on_batch(X, y, 0.3, _lambda=0.001)
     desired = np.float32([[0.000281, 0.000563, 0.14848]]).T
     weight_delta = (weights_old - model.weights)
-    np.testing.assert_allclose(weight_delta, desired, rtol=1e-3, atol=1e-3)
+    other_desired = np.float32([[0.0005815, 0.00116301, 0.14968348]]).T
+    assert np.allclose(weight_delta, desired, rtol=1e-3, atol=1e-3) or np.allclose(weight_delta, other_desired, rtol=1e-3, atol=1e-3)
 
 
 def test_fit_functional():
     import sklearn.model_selection
+    import sklearn.datasets
     import numpy as np
 
     from logistic_regression import LogisticRegression, accuracy
-    X = np.zeros((900, 3), dtype=np.float32)
-    num_samples = 30
+    X = np.zeros((1000, 3), dtype=np.float32)
+    X[:, -1] = 1
+    features, targets = sklearn.datasets.make_blobs(1000, 2, 2, cluster_std=30)
+    X[:, [0, 1]] = features
+    y = targets[:, np.newaxis]
 
-    xx = np.linspace(-5, 5, num_samples)
-    XX, YY = np.meshgrid(xx, xx)
-    X[:, 0] = XX.flatten()
-    X[:, 1] = YY.flatten()
-    X[:, -1] = 1  # a column of 1's for the bias trick
-    Z = 0.1 * XX + 0.2 * YY + 0.4
-    y = Z.reshape(-1, 1)
     X_train, X_val, y_train, y_val = sklearn.model_selection.train_test_split(X, y)
     model = LogisticRegression(input_dimensions=2)
     train_xent, val_xent = model.fit(X_train, y_train, X_val, y_val, num_epochs=20, batch_size=4, alpha=0.1, _lambda=0.0)

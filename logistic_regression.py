@@ -71,7 +71,7 @@ class LogisticRegression(object):
         self.weights = 0
         raise Warning("You must implement _initialize_weights! This function should initialize (or re-initialize) your model weights. Use 'the bias trick' for this assignment")
 
-    def fit(self, X_train, y_train, X_val, y_val, num_epochs=10, alpha=0.01, _lambda=0.0):
+    def fit(self, X_train, y_train, X_val, y_val, num_epochs=10, batch_size=4, alpha=0.01, _lambda=0.0):
         """
         Stochastic Gradient Descent training loop for a logistic regression model
         :param X_train: Training input data [n_samples, n_features+1], assume last column is 1's for the bias
@@ -85,13 +85,14 @@ class LogisticRegression(object):
         :return: (train_error_, val_error) two arrays of cross-entropy values for each epoch (one for training and validation error)
         """
         raise Warning("You must implement fit! This function should implement a mini-batch stochastic gradient descent training loop")
-
+		train_xent = [] # append your cross-entropy on training set to this after each epoch
+        val_xent = [] # append your cross-entropy on validation set to this after each epoch
         batch_indices = calculate_batches(X, batch_size)
 
         for epoch in range(num_epochs):
             for batch in batch_indices:
                 self._train_on_batch(X_train[batch], y_train[batch], alpha, _lambda)
-        return None
+        return (train_xent, val_xent)
 
     def predict_proba(self, X):
         """
