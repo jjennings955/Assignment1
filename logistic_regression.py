@@ -135,7 +135,7 @@ class LogisticRegression(object):
         # this is the gradient W.R.T the weights
         raise Warning("You must implement the binary cross entropy gradient")
 
-    def _l2_regularization_gradient(self, W):
+    def _l2_regularization_gradient(self):
         """
         Compute gradient for l2 weight regularization
         :return: Gradient of squared l2 norm w.r.t model weights [n_features+1, 1]

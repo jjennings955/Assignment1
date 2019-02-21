@@ -53,7 +53,7 @@ def test_predict_proba():
     X = np.float32([[1,2,1],
                     [0,0,-2]])
     desired = np.float32([[0.9987, 0.0003]]).T
-    actual = model.predict(X)
+    actual = model.predict_proba(X)
     np.testing.assert_allclose(actual, desired, rtol=1e-3, atol=1e-3)
 
 def test_predict():
@@ -113,7 +113,7 @@ def test_fit_functional():
     from logistic_regression import LogisticRegression, accuracy
     X = np.zeros((1000, 3), dtype=np.float32)
     X[:, -1] = 1
-    features, targets = sklearn.datasets.make_blobs(1000, 2, 2, cluster_std=30)
+    features, targets = sklearn.datasets.make_blobs(1000, 2, 2, cluster_std=1, random_state=1234)
     X[:, [0, 1]] = features
     y = targets[:, np.newaxis]
 
